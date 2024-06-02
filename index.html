@@ -9,6 +9,10 @@
             max-width: 300px;
             margin-top: 10px;
         }
+        #predictedImage {
+            max-width: 300px;
+            margin-top: 10px;
+        }
         #dropZone {
             width: 300px;
             height: 200px;
@@ -27,11 +31,12 @@
 <body>
     <h1>Upload an Image</h1>
     <form id="uploadForm" enctype="multipart/form-data">
-        <input type="file" id="imageInput" name="image" accept="image/*" required>
+        <input type="file" id="imageInput" name="file" accept="image/*" required>
         <button type="submit">Upload</button>
     </form>
     <div id="dropZone">Drag and drop an image here</div>
     <img id="imagePreview" alt="Image Preview">
+    <div id="predictedImage"></div>
 
     <script>
         document.getElementById('imageInput').addEventListener('change', function(event) {
@@ -74,14 +79,20 @@
             const formData = new FormData();
             formData.append('file', file);
 
-            fetch('http://127.0.0.1:8000/upload', {
+            fetch('http://127.0.0.1:8000/upload/', {
                 method: 'POST',
                 body: formData
             })
             .then(response => response.json())
             .then(result => {
-                console.log(result);
-                alert(result.message);
+            
+                const imgUrl = 'data:image/jpeg;base64,' + result.image;
+
+                const img = document.createElement('img');
+                img.src = imgUrl;
+
+                document.getElementById('predictedImage').appendChild(img);
+            
             })
             .catch(error => {
                 console.error('Error:', error);

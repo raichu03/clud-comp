@@ -2,7 +2,10 @@ from fastapi import FastAPI, HTTPException, File, UploadFile
 import uvicorn
 import os
 from fastapi.responses import HTMLResponse
-
+import prediction
+from fastapi.responses import FileResponse
+import io
+import base64
 
 app = FastAPI()
 
@@ -20,14 +23,16 @@ async def read_root():
     
 @app.post("/upload/")
 async def upload_file(file: UploadFile = File(...)):
-    print(f"File uploaded: {type(file)}")
     file_location = os.path.join(UPLOAD_FOLDER, file.filename)
     with open(file_location, "wb") as f:
         f.write(await file.read())
-    return {"message": "File uploaded successfully"}
-        
-
-
+    
+    image_path = prediction.predict_image(file_location)
+    with open(image_path, "rb") as f:
+        file_content = f.read()
+    
+    encoded_image = base64.b64encode(file_content).decode()
+    return {"image": encoded_image}
 
 
 if __name__ == "__main__":
