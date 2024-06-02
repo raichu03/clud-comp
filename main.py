@@ -3,11 +3,19 @@ import uvicorn
 import os
 from fastapi.responses import HTMLResponse
 import prediction
-from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 import io
 import base64
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins
+    allow_credentials=True,  # Allow cookies and other credentials
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
 
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
