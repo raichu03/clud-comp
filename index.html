@@ -102,13 +102,20 @@
         document.getElementById('uploadForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(event.target);
-            fetch('http://0.0.0.0:8000/upload', {
+            fetch('http://0.0.0.0:8000/upload/', {
                 method: 'POST',
                 body: formData
             })
             .then(response => response.json())
             .then(result => {
-                alert(result.message);
+            
+                const imgUrl = 'data:image/jpeg;base64,' + result.image;
+
+                const img = document.createElement('img');
+                img.src = imgUrl;
+
+                document.getElementById('predictedImage').appendChild(img);
+            
             })
             .catch(error => {
                 console.error('Error:', error);
